@@ -17,6 +17,7 @@ ATTR_PERSISTENT = 'persistent'
 ATTR_UNIQUE_ID = 'unique_id'
 ATTR_VALUE = "value"
 ATTR_VERSION = "version"
+ATTR_IS_VIRTUAL = 'is_virtual'
 
 CONF_CLASS = "class"
 CONF_INITIAL_AVAILABILITY = "initial_availability"
@@ -26,9 +27,11 @@ CONF_OPEN_CLOSE_DURATION = "open_close_duration"
 CONF_OPEN_CLOSE_TICK = "open_close_tick"
 CONF_PERSISTENT = "persistent"
 CONF_YAML_CONFIG = "yaml_config"
+CONF_IS_VIRTUAL = "is_virtual"
 
 DEFAULT_AVAILABILITY = True
 DEFAULT_PERSISTENT = True
+DEFAULT_IS_VIRTUAL = True
 
 IMPORTED_GROUP_NAME = "imported"
 

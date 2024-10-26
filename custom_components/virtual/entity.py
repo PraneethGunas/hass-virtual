@@ -37,6 +37,7 @@ def virtual_schema(default_initial_value: str, extra_attrs):
         vol.Optional(ATTR_DEVICE_ID, default="NOTYET"): cv.string,
         vol.Optional(ATTR_ENTITY_ID, default="NOTYET"): cv.string,
         vol.Optional(ATTR_UNIQUE_ID, default="NOTYET"): cv.string,
+        vol.Optional(CONF_IS_VIRTUAL, default=DEFAULT_IS_VIRTUAL): cv.boolean,
     }
     schema.update(extra_attrs)
     return schema
@@ -48,12 +49,14 @@ class VirtualEntity(RestoreEntity):
 
     # Are we saving/restoring this entity
     _persistent: bool = True
+    _is_virtual: bool = True
 
     def __init__(self, config, domain, old_style : bool = False):
         """Initialize an Virtual Sensor."""
         _LOGGER.debug(f"creating-virtual-{domain}={config}")
         self._config = config
         self._persistent = config.get(CONF_PERSISTENT)
+        self._is_virtual = config.get(CONF_IS_VIRTUAL)
 
         if old_style:
             # Build name, entity id and unique id. We do this because historically
@@ -109,6 +112,7 @@ class VirtualEntity(RestoreEntity):
         self._attr_extra_state_attributes = {
             ATTR_PERSISTENT: self._persistent,
             ATTR_AVAILABLE: self._attr_available,
+            ATTR_IS_VIRTUAL: self._is_virtual,
         }
         if _LOGGER.isEnabledFor(logging.DEBUG):
             self._attr_extra_state_attributes.update({
