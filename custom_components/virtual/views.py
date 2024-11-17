@@ -6,8 +6,8 @@ from .const import COMPONENT_DOMAIN, IMPORTED_GROUP_NAME
 _LOGGER = logging.getLogger(__name__)
 
 class VirtualEntityAddView(HomeAssistantView):
-    url = "/api/virtual_entity/add"
-    name = "api:virtual_entity:add"
+    url = "/api/virtual/add"
+    name = "api:virtual:add"
     requires_auth = True
 
     async def post(self, request):
