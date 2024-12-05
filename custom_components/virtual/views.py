@@ -26,6 +26,11 @@ class VirtualEntityAddView(HomeAssistantView):
                     hass, entity_config
                 )
                 return self.json({"status": "success", "message": f"Virtual light '{entity_name}' added."})
+            elif entity_type == "sensor":
+                await hass.components.virtual.sensor.async_add_virtual_sensor(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual sensor '{entity_name}' added."})
             else:
                 return self.json({"status": "error", "message": f"Unsupported entity type '{entity_type}'."})
 

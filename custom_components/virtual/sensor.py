@@ -130,6 +130,11 @@ async def async_setup_entry(
         entry: ConfigEntry,
         async_add_entities: Callable[[list], None],
 ) -> None:
+    # Hacky way to store the async_add_entities function (modify this in the future) 
+    _LOGGER.debug("saving async_add_entities in setup entry")
+    hass.data.setdefault(f'{COMPONENT_DOMAIN}_sensor_entities', [])
+    hass.data[f'{COMPONENT_DOMAIN}_sensor_add_entities'] = async_add_entities
+
     _LOGGER.debug("setting up the entries...")
 
     entities = []
@@ -138,6 +143,18 @@ async def async_setup_entry(
         entities.append(VirtualSensor(entity, False))
     async_add_entities(entities)
     setup_services(hass)
+
+async def async_add_virtual_sensor(hass, config):
+    """Add a virtual sensor entity."""
+    entity = VirtualSensor(config, False)
+    _LOGGER.debug(f"adding virtual sensor: {entity}")
+
+    async_add_entities = hass.data.get(f'{COMPONENT_DOMAIN}_sensor_add_entities')
+    if async_add_entities is not None:
+        async_add_entities([entity], update_before_add=True)
+        hass.data[f'{COMPONENT_DOMAIN}_sensor_entities'].append(entity)
+    else:
+        _LOGGER.error("async_add_entities is not available.")
 
 
 class VirtualSensor(VirtualEntity, Entity):
