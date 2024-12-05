@@ -30,7 +30,7 @@ from .const import *
 from .cfg import BlendedCfg, UpgradeCfg
 
 from homeassistant.components.http import HomeAssistantView
-from .views import VirtualaEntityAddView
+from .views import VirtualEntityAddView, AutomationsConfigView
 
 __version__ = '0.9.0b17'
 
@@ -65,6 +65,7 @@ VIRTUAL_PLATFORMS = [
 async def async_setup(hass, config):
 
     hass.http.register_view(VirtualEntityAddView())
+    hass.http.register_view(AutomationsConfigView())
 
     """Set up a virtual components.
 
