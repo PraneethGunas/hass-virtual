@@ -1,4 +1,6 @@
 import logging
+import yaml
+import aiofiles
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 from .const import COMPONENT_DOMAIN, IMPORTED_GROUP_NAME
@@ -30,3 +32,19 @@ class VirtualEntityAddView(HomeAssistantView):
         except Exception as e:
             _LOGGER.error(f"Failed to initiate config flow for '{entity_name}': {e}")
             return self.json({"status": "error", "message": f"Failed to add '{entity_name}': {str(e)}"})
+
+class AutomationsConfigView(HomeAssistantView):
+    url = "/api/virtual/automations/config"
+    name = "api:virtual:automations:config"
+    requires_auth = True
+
+    async def get(self, request):
+        hass = request.app["hass"]
+        file_path = hass.config.path("automations.yaml")
+        try:
+            async with aiofiles.open(file_path, "r") as file:
+                content = await file.read()
+                automations = yaml.safe_load(content)
+            return self.json(automations)
+        except Exception as e:
+            return self.json({"error": str(e)}, status=500)
