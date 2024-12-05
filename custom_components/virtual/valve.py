@@ -63,6 +63,11 @@ async def async_setup_entry(
         entry: ConfigEntry,
         async_add_entities: Callable[[list], None],
 ) -> None:
+    # Hacky way to store the async_add_entities function (modify this in the future) 
+    _LOGGER.debug("saving async_add_entities in setup entry")
+    hass.data.setdefault(f'{COMPONENT_DOMAIN}_valve_entities', [])
+    hass.data[f'{COMPONENT_DOMAIN}_valve_add_entities'] = async_add_entities
+
     _LOGGER.debug("setting up the entries...")
 
     entities = []
@@ -71,6 +76,17 @@ async def async_setup_entry(
         entities.append(VirtualValve(entity, False))
     async_add_entities(entities)
 
+async def async_add_virtual_valve(hass, config):
+    """Add a virtual valve entity."""
+    entity = VirtualValve(config, False)
+    _LOGGER.debug(f"adding virtual valve: {entity}")
+
+    async_add_entities = hass.data.get(f'{COMPONENT_DOMAIN}_valve_add_entities')
+    if async_add_entities is not None:
+        async_add_entities([entity], update_before_add=True)
+        hass.data[f'{COMPONENT_DOMAIN}_valve_entities'].append(entity)
+    else:
+        _LOGGER.error("async_add_entities is not available.")
 
 class VirtualValve(VirtualOpenableEntity, ValveEntity):
 

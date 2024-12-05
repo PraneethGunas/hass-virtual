@@ -31,6 +31,31 @@ class VirtualEntityAddView(HomeAssistantView):
                     hass, entity_config
                 )
                 return self.json({"status": "success", "message": f"Virtual sensor '{entity_name}' added."})
+            elif entity_type == "binary_sensor":
+                await hass.components.virtual.binary_sensor.async_add_virtual_binary_sensor(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual binary sensor '{entity_name}' added."})
+            elif entity_type == "fan":
+                await hass.components.virtual.fan.async_add_virtual_fan(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual fan '{entity_name}' added."})
+            elif entity_type == "lock":
+                await hass.components.virtual.lock.async_add_virtual_lock(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual lock '{entity_name}' added."})
+            elif entity_type == "cover":
+                await hass.components.virtual.cover.async_add_virtual_cover(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual cover '{entity_name}' added."})
+            elif entity_type == "valve":
+                await hass.components.virtual.valve.async_add_virtual_valve(
+                    hass, entity_config
+                )
+                return self.json({"status": "success", "message": f"Virtual valve '{entity_name}' added."})
             else:
                 return self.json({"status": "error", "message": f"Unsupported entity type '{entity_type}'."})
 

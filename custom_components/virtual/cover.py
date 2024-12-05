@@ -57,6 +57,11 @@ async def async_setup_entry(
         entry: ConfigEntry,
         async_add_entities: Callable[[list], None],
 ) -> None:
+    # Hacky way to store the async_add_entities function (modify this in the future) 
+    _LOGGER.debug("saving async_add_entities in setup entry")
+    hass.data.setdefault(f'{COMPONENT_DOMAIN}_cover_entities', [])
+    hass.data[f'{COMPONENT_DOMAIN}_cover_add_entities'] = async_add_entities
+
     _LOGGER.debug("setting up the entries...")
 
     entities = []
@@ -65,6 +70,17 @@ async def async_setup_entry(
         entities.append(VirtualCover(entity, False))
     async_add_entities(entities)
 
+async def async_add_virtual_cover(hass, config):
+    """Add a virtual cover entity."""
+    entity = VirtualCover(config, False)
+    _LOGGER.debug(f"adding virtual cover: {entity}")
+
+    async_add_entities = hass.data.get(f'{COMPONENT_DOMAIN}_cover_add_entities')
+    if async_add_entities is not None:
+        async_add_entities([entity], update_before_add=True)
+        hass.data[f'{COMPONENT_DOMAIN}_cover_entities'].append(entity)
+    else:
+        _LOGGER.error("async_add_entities is not available.")
 
 class VirtualCover(VirtualOpenableEntity, CoverEntity):
     """Representation of a Virtual cover."""
